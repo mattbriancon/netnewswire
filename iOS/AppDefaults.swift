@@ -72,6 +72,7 @@ final class AppDefaults: Sendable {
 		static let selectedSidebarItem = "selectedSidebarItem"
 		static let selectedArticle = "selectedArticle"
 		static let didMigrateLegacyStateRestorationInfo = "didMigrateLegacyStateRestorationInfo"
+		static let articleImagePreloadPolicy = "articleImagePreloadPolicy"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -348,6 +349,16 @@ final class AppDefaults: Sendable {
 		}
 	}
 
+	var articleImagePreloadPolicy: ArticleImagePreloadPolicy {
+		get {
+			let rawValue = AppDefaults.store.integer(forKey: Key.articleImagePreloadPolicy)
+			return ArticleImagePreloadPolicy(rawValue: rawValue) ?? .wifiOnly
+		}
+		set {
+			AppDefaults.store.set(newValue.rawValue, forKey: Key.articleImagePreloadPolicy)
+		}
+	}
+
 	@MainActor static func registerDefaults() {
 		let defaults: [String : Any] = [Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
 										Key.timelineGroupByFeed: false,
@@ -359,7 +370,8 @@ final class AppDefaults: Sendable {
 										Key.articleFullscreenEnabled: false,
 										Key.confirmMarkAllAsRead: true,
 										Key.articleContentJavascriptEnabled: true,
-										Key.currentThemeName: Self.defaultThemeName]
+										Key.currentThemeName: Self.defaultThemeName,
+										Key.articleImagePreloadPolicy: ArticleImagePreloadPolicy.wifiOnly.rawValue]
 		AppDefaults.store.register(defaults: defaults)
 	}
 

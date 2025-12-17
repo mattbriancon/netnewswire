@@ -15,6 +15,7 @@ import UniformTypeIdentifiers
 final class GeneralPreferencesViewController: NSViewController {
 	@IBOutlet var articleThemePopup: NSPopUpButton!
 	@IBOutlet var defaultBrowserPopup: NSPopUpButton!
+	@IBOutlet var articleImagePreloadPopup: NSPopUpButton!
 
 	public override init(nibName nibNameOrNil: NSNib.Name?, bundle nibBundleOrNil: Bundle?) {
 		super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -66,6 +67,15 @@ final class GeneralPreferencesViewController: NSViewController {
 		updateBrowserPopup()
 	}
 
+	@IBAction func articleImagePreloadPopupDidChange(_ sender: Any?) {
+		guard let menuItem = articleImagePreloadPopup.selectedItem,
+			  let policy = menuItem.representedObject as? ArticleImagePreloadPolicy else {
+			return
+		}
+		AppDefaults.shared.articleImagePreloadPolicy = policy
+		updateArticleImagePreloadPopup()
+	}
+
 }
 
 // MARK: - Private
@@ -80,6 +90,7 @@ private extension GeneralPreferencesViewController {
 	func updateUI() {
 		updateArticleThemePopup()
 		updateBrowserPopup()
+		updateArticleImagePreloadPopup()
 	}
 
 	func updateArticleThemePopup() {
@@ -130,6 +141,26 @@ private extension GeneralPreferencesViewController {
 		}
 
 		defaultBrowserPopup.selectItem(at: defaultBrowserPopup.indexOfItem(withRepresentedObject: AppDefaults.shared.defaultBrowserID))
+	}
+
+	func updateArticleImagePreloadPopup() {
+		let menu = articleImagePreloadPopup.menu!
+		menu.removeAllItems()
+
+		let neverItem = NSMenuItem(title: NSLocalizedString("Never", comment: "Image preload policy"), action: nil, keyEquivalent: "")
+		neverItem.representedObject = ArticleImagePreloadPolicy.never
+		menu.addItem(neverItem)
+
+		let wifiOnlyItem = NSMenuItem(title: NSLocalizedString("Wi-Fi Only", comment: "Image preload policy"), action: nil, keyEquivalent: "")
+		wifiOnlyItem.representedObject = ArticleImagePreloadPolicy.wifiOnly
+		menu.addItem(wifiOnlyItem)
+
+		let alwaysItem = NSMenuItem(title: NSLocalizedString("Always", comment: "Image preload policy"), action: nil, keyEquivalent: "")
+		alwaysItem.representedObject = ArticleImagePreloadPolicy.always
+		menu.addItem(alwaysItem)
+
+		let currentPolicy = AppDefaults.shared.articleImagePreloadPolicy
+		articleImagePreloadPopup.selectItem(at: articleImagePreloadPopup.indexOfItem(withRepresentedObject: currentPolicy))
 	}
 
 	func updateNotificationSettings() {

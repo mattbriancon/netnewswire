@@ -98,6 +98,9 @@ import Secrets
 		ExtensionContainersFile.shared.start()
 		ExtensionFeedAddRequestFile.shared.start()
 
+		// Initialize article image preloader
+		_ = ArticleImagePreloader.shared
+
 		#if DEBUG
 		ArticleStatusSyncTimer.shared.update()
 		#endif

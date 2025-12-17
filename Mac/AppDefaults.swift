@@ -43,6 +43,7 @@ final class AppDefaults: Sendable {
 		static let defaultBrowserID = "defaultBrowserID"
 		static let currentThemeName = "currentThemeName"
 		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
+		static let articleImagePreloadPolicy = "articleImagePreloadPolicy"
 
 		// Hidden prefs
 		static let showDebugMenu = "ShowDebugMenu"
@@ -317,6 +318,16 @@ final class AppDefaults: Sendable {
 		}
 	}
 
+	var articleImagePreloadPolicy: ArticleImagePreloadPolicy {
+		get {
+			let rawValue = UserDefaults.standard.integer(forKey: Key.articleImagePreloadPolicy)
+			return ArticleImagePreloadPolicy(rawValue: rawValue) ?? .wifiOnly
+		}
+		set {
+			UserDefaults.standard.set(newValue.rawValue, forKey: Key.articleImagePreloadPolicy)
+		}
+	}
+
 	@MainActor func registerDefaults() {
 		#if DEBUG
  		let showDebugMenu = true
@@ -334,7 +345,8 @@ final class AppDefaults: Sendable {
 			Key.refreshInterval: RefreshInterval.everyHour.rawValue,
 			Key.showDebugMenu: showDebugMenu,
 			Key.currentThemeName: Self.defaultThemeName,
-			Key.articleContentJavascriptEnabled: true
+			Key.articleContentJavascriptEnabled: true,
+			Key.articleImagePreloadPolicy: ArticleImagePreloadPolicy.wifiOnly.rawValue
 		]
 
 		UserDefaults.standard.register(defaults: defaults)

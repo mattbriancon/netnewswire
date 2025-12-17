@@ -27,6 +27,7 @@ final class SettingsViewController: UITableViewController {
 	@IBOutlet var colorPaletteDetailLabel: UILabel!
 	@IBOutlet var openLinksInNetNewsWire: UISwitch!
 	@IBOutlet var enableJavaScriptSwitch: UISwitch!
+	@IBOutlet var articleImagePreloadDetailLabel: UILabel!
 
 	var scrollToArticlesSection = false
 	weak var presentingParentController: UIViewController?
@@ -93,6 +94,7 @@ final class SettingsViewController: UITableViewController {
 
 		openLinksInNetNewsWire.isOn = !AppDefaults.shared.useSystemBrowser
 
+		updateArticleImagePreloadDetailLabel()
 
 		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 32.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
@@ -214,6 +216,10 @@ final class SettingsViewController: UITableViewController {
 			case 0:
 				let articleThemes = UIStoryboard.settings.instantiateController(ofType: ArticleThemesTableViewController.self)
 				self.navigationController?.pushViewController(articleThemes, animated: true)
+			case 1:
+				// TODO: Wire this up in Settings.storyboard to the appropriate row
+				showArticleImagePreloadOptions()
+				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			default:
 				break
 			}
@@ -320,6 +326,54 @@ final class SettingsViewController: UITableViewController {
 		AppDefaults.shared.isArticleContentJavascriptEnabled = enableJavaScriptSwitch.isOn
  	}
 
+	func showArticleImagePreloadOptions() {
+		let alertController = UIAlertController(title: NSLocalizedString("Preload Article Images", comment: "Preload images setting"), message: NSLocalizedString("Choose when to download article images in the background", comment: "Preload images description"), preferredStyle: .actionSheet)
+
+		let neverAction = UIAlertAction(title: NSLocalizedString("Never", comment: "Image preload policy"), style: .default) { _ in
+			AppDefaults.shared.articleImagePreloadPolicy = .never
+			self.updateArticleImagePreloadDetailLabel()
+		}
+
+		let wifiOnlyAction = UIAlertAction(title: NSLocalizedString("Wi-Fi Only", comment: "Image preload policy"), style: .default) { _ in
+			AppDefaults.shared.articleImagePreloadPolicy = .wifiOnly
+			self.updateArticleImagePreloadDetailLabel()
+		}
+
+		let alwaysAction = UIAlertAction(title: NSLocalizedString("Always", comment: "Image preload policy"), style: .default) { _ in
+			AppDefaults.shared.articleImagePreloadPolicy = .always
+			self.updateArticleImagePreloadDetailLabel()
+		}
+
+		let cancelAction = UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil)
+
+		// Mark the current selection
+		switch AppDefaults.shared.articleImagePreloadPolicy {
+		case .never:
+			neverAction.setValue(true, forKey: "checked")
+		case .wifiOnly:
+			wifiOnlyAction.setValue(true, forKey: "checked")
+		case .always:
+			alwaysAction.setValue(true, forKey: "checked")
+		}
+
+		alertController.addAction(neverAction)
+		alertController.addAction(wifiOnlyAction)
+		alertController.addAction(alwaysAction)
+		alertController.addAction(cancelAction)
+
+		present(alertController, animated: true)
+	}
+
+	func updateArticleImagePreloadDetailLabel() {
+		switch AppDefaults.shared.articleImagePreloadPolicy {
+		case .never:
+			articleImagePreloadDetailLabel.text = NSLocalizedString("Never", comment: "Image preload policy")
+		case .wifiOnly:
+			articleImagePreloadDetailLabel.text = NSLocalizedString("Wi-Fi Only", comment: "Image preload policy")
+		case .always:
+			articleImagePreloadDetailLabel.text = NSLocalizedString("Always", comment: "Image preload policy")
+		}
+	}
 
 	// MARK: Notifications
 

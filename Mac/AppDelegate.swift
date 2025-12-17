@@ -166,6 +166,9 @@ let appName = "NetNewsWire"
 		}
 		let localAccount = AccountManager.shared.defaultAccount
 
+		// Initialize article image preloader
+		_ = ArticleImagePreloader.shared
+
 		if isFirstRun && !AccountManager.shared.anyAccountHasAtLeastOneFeed() {
 			// Import default feeds.
 			DefaultFeedsImporter.importDefaultFeeds(account: localAccount)
