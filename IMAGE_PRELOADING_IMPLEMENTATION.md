@@ -33,14 +33,14 @@ This document describes the implementation of automatic image preloading for RSS
 
 **Options:**
 - **Never** (`.never`) - Don't preload images
-- **Wi-Fi Only** (`.wifiOnly`) - Only preload when on WiFi (default)
-- **Always** (`.always`) - Always preload images
+- **Wi-Fi Only** (`.wifiOnly`) - Only preload when on WiFi
+- **Always** (`.always`) - Always preload images (default)
 
 **AppDefaults Integration:**
 - macOS: `/Mac/AppDefaults.swift`
 - iOS: `/iOS/AppDefaults.swift`
 
-Both platforms store the preference with key `"articleImagePreloadPolicy"` and default to `.wifiOnly`.
+Both platforms store the preference with key `"articleImagePreloadPolicy"` and default to `.always`.
 
 ### 4. Automatic Initialization
 **macOS:** `Mac/AppDelegate.swift:170`

@@ -321,7 +321,7 @@ final class AppDefaults: Sendable {
 	var articleImagePreloadPolicy: ArticleImagePreloadPolicy {
 		get {
 			let rawValue = UserDefaults.standard.integer(forKey: Key.articleImagePreloadPolicy)
-			return ArticleImagePreloadPolicy(rawValue: rawValue) ?? .wifiOnly
+			return ArticleImagePreloadPolicy(rawValue: rawValue) ?? .always
 		}
 		set {
 			UserDefaults.standard.set(newValue.rawValue, forKey: Key.articleImagePreloadPolicy)
@@ -346,7 +346,7 @@ final class AppDefaults: Sendable {
 			Key.showDebugMenu: showDebugMenu,
 			Key.currentThemeName: Self.defaultThemeName,
 			Key.articleContentJavascriptEnabled: true,
-			Key.articleImagePreloadPolicy: ArticleImagePreloadPolicy.wifiOnly.rawValue
+			Key.articleImagePreloadPolicy: ArticleImagePreloadPolicy.always.rawValue
 		]
 
 		UserDefaults.standard.register(defaults: defaults)
